@@ -10,46 +10,51 @@ import (
 // Log instance
 var Log = NewLogger()
 
-type logger struct {
-	log *log.Logger
+// Logger struct
+type Logger struct {
+	*log.Logger
 }
 
 //NewLogger Create log instance
-func NewLogger() *logger {
-	logger := logger{}
-	logger.log = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+func NewLogger() *Logger {
+	log := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	logger := Logger{log}
 	return &logger
 }
 
-func (logger *logger) Debug(message ...interface{}) {
+// Debug print debug
+func (logger *Logger) Debug(message ...interface{}) {
 	logger.setPrefix("DEBUG")
-	logger.log.Println(message...)
+	logger.Println(message...)
 }
 
-func (logger *logger) Info(message ...interface{}) {
+// Info print info
+func (logger *Logger) Info(message ...interface{}) {
 	logger.setPrefix("INFO")
-	logger.log.Println(message...)
+	logger.Println(message...)
 }
 
-func (logger *logger) Warning(message ...interface{}) {
+// Warning print warning
+func (logger *Logger) Warning(message ...interface{}) {
 	logger.setPrefix("Warning")
-	logger.log.Println(message...)
+	logger.Println(message...)
 }
 
-func (logger *logger) Error(message ...interface{}) {
+// Error print error
+func (logger *Logger) Error(message ...interface{}) {
 	logger.setPrefix("ERROR")
-	logger.log.Println(message...)
+	logger.Println(message...)
 }
 
-func (logger *logger) caller(skip int) (pc uintptr, file string, line int, ok bool) {
+func (logger *Logger) caller(skip int) (pc uintptr, file string, line int, ok bool) {
 	return runtime.Caller(skip)
 }
 
-func (logger *logger) setPrefix(level string) {
+func (logger *Logger) setPrefix(level string) {
 	pc, file, line, ok := logger.caller(3)
 	if !ok {
-		logger.log.Println("Error to get func name and file name!")
+		logger.Println("Error to get func name and file name!")
 		return
 	}
-	logger.log.SetPrefix(fmt.Sprintf("[%s] %s %s %d ", level, file, runtime.FuncForPC(pc).Name(), line))
+	logger.SetPrefix(fmt.Sprintf("[%s] %s %s %d ", level, file, runtime.FuncForPC(pc).Name(), line))
 }
