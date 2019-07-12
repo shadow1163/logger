@@ -21,3 +21,8 @@ func TestError(t *testing.T) {
 	logger := NewLogger()
 	logger.Error("123", 123, 12, "123")
 }
+
+func TestPrintln(t *testing.T) {
+	logger := NewLogger()
+	logger.Println("testing")
+}

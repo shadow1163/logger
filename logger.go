@@ -19,6 +19,7 @@ type Logger struct {
 func NewLogger() *Logger {
 	log := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	logger := Logger{log}
+	logger.setPrefix("INFO")
 	return &logger
 }
 
@@ -51,10 +52,11 @@ func (logger *Logger) caller(skip int) (pc uintptr, file string, line int, ok bo
 }
 
 func (logger *Logger) setPrefix(level string) {
-	pc, file, line, ok := logger.caller(3)
+	_, file, line, ok := logger.caller(3)
 	if !ok {
 		logger.Println("Error to get func name and file name!")
 		return
 	}
-	logger.SetPrefix(fmt.Sprintf("[%s] %s %s %d ", level, file, runtime.FuncForPC(pc).Name(), line))
+	// logger.SetPrefix(fmt.Sprintf("[%s] %s %s %d ", level, file, runtime.FuncForPC(pc).Name(), line))
+	logger.SetPrefix(fmt.Sprintf("[%s] %s %d ", level, file, line))
 }
