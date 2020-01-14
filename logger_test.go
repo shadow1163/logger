@@ -26,3 +26,12 @@ func TestPrintln(t *testing.T) {
 	logger := NewLogger()
 	logger.Println("testing")
 }
+
+func TestLevel(t *testing.T) {
+	logger := NewLogger()
+	logger.SetLevel(10)
+	logger.Debug("Debug")
+	logger.Info("Info")
+	logger.Warning("Warning")
+	logger.Error("Error")
+}

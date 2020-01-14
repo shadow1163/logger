@@ -1,3 +1,3 @@
 module github.com/shadow1163/logger
 
-go 1.12
+go 1.13

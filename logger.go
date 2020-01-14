@@ -12,39 +12,65 @@ var Log = NewLogger()
 
 // Logger struct
 type Logger struct {
+	Level int
 	*log.Logger
 }
+
+const (
+	NONE = iota //0 NONE
+	ERROR
+	WARNING
+	INFO
+	DEBUG
+)
 
 //NewLogger Create log instance
 func NewLogger() *Logger {
 	log := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	logger := Logger{log}
+	logger := Logger{3, log}
 	logger.setPrefix("INFO")
 	return &logger
 }
 
 // Debug print debug
 func (logger *Logger) Debug(message ...interface{}) {
-	logger.setPrefix("DEBUG")
-	logger.Println(message...)
+	if logger.Level >= DEBUG {
+		logger.setPrefix("DEBUG")
+		logger.Println(message...)
+	}
 }
 
 // Info print info
 func (logger *Logger) Info(message ...interface{}) {
-	logger.setPrefix("INFO")
-	logger.Println(message...)
+	if logger.Level >= INFO {
+		logger.setPrefix("INFO")
+		logger.Println(message...)
+	}
 }
 
 // Warning print warning
 func (logger *Logger) Warning(message ...interface{}) {
-	logger.setPrefix("Warning")
-	logger.Println(message...)
+	if logger.Level >= WARNING {
+		logger.setPrefix("Warning")
+		logger.Println(message...)
+	}
 }
 
 // Error print error
 func (logger *Logger) Error(message ...interface{}) {
-	logger.setPrefix("ERROR")
-	logger.Println(message...)
+	if logger.Level >= ERROR {
+		logger.setPrefix("ERROR")
+		logger.Println(message...)
+	}
+}
+
+// SetLevel set log level
+func (logger *Logger) SetLevel(level int) {
+	if level >= 5 || level < 0 {
+		logger.Error("Invalid Level, must one of NONE, ERROR, WARNING, INFO, DEBUG!")
+		return
+	}
+	logger.Level = level
 }
 
 func (logger *Logger) caller(skip int) (pc uintptr, file string, line int, ok bool) {
