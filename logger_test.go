@@ -38,7 +38,7 @@ func TestLevel(t *testing.T) {
 
 func TestOutput(t *testing.T) {
 	logger := NewLogger()
-	logger.Output("output")
+	logger.Std("output")
 }
 
 func TestPrintF(t *testing.T) {

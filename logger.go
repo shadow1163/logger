@@ -104,8 +104,8 @@ func (logger *Logger) SetLevel(level int) {
 	logger.Level = level
 }
 
-// Output no level to print
-func (logger *Logger) Output(message ...interface{}) {
+// Stand no level to print
+func (logger *Logger) Std(message ...interface{}) {
 	logger.SetPrefix("")
 	logger.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 	logger.Println(message...)
