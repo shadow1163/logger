@@ -40,11 +40,26 @@ func (logger *Logger) Debug(message ...interface{}) {
 	}
 }
 
+// Debugf print debug
+func (logger *Logger) Debugf(format string, message ...interface{}) {
+	if logger.Level >= DEBUG {
+		logger.setPrefix("DEBUG")
+		logger.Println(fmt.Sprintf(format, message...))
+	}
+}
+
 // Info print info
 func (logger *Logger) Info(message ...interface{}) {
 	if logger.Level >= INFO {
 		logger.setPrefix("INFO")
-		logger.Println(message...)
+	}
+}
+
+// Infof print info
+func (logger *Logger) Infof(format string, message ...interface{}) {
+	if logger.Level >= INFO {
+		logger.setPrefix("INFO")
+		logger.Printf(format, message...)
 	}
 }
 
@@ -56,11 +71,27 @@ func (logger *Logger) Warning(message ...interface{}) {
 	}
 }
 
+// Warningf print warning
+func (logger *Logger) Warningf(format string, message ...interface{}) {
+	if logger.Level >= WARNING {
+		logger.setPrefix("Warning")
+		logger.Printf(format, message...)
+	}
+}
+
 // Error print error
 func (logger *Logger) Error(message ...interface{}) {
 	if logger.Level >= ERROR {
 		logger.setPrefix("ERROR")
 		logger.Println(message...)
+	}
+}
+
+// Errorf print error
+func (logger *Logger) Errorf(format string, message ...interface{}) {
+	if logger.Level >= ERROR {
+		logger.setPrefix("ERROR")
+		logger.Printf(format, message...)
 	}
 }
 
@@ -71,6 +102,13 @@ func (logger *Logger) SetLevel(level int) {
 		return
 	}
 	logger.Level = level
+}
+
+// Output no level to print
+func (logger *Logger) Output(message ...interface{}) {
+	logger.SetPrefix("")
+	logger.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+	logger.Println(message...)
 }
 
 func (logger *Logger) caller(skip int) (pc uintptr, file string, line int, ok bool) {

@@ -35,3 +35,18 @@ func TestLevel(t *testing.T) {
 	logger.Warning("Warning")
 	logger.Error("Error")
 }
+
+func TestOutput(t *testing.T) {
+	logger := NewLogger()
+	logger.Output("output")
+}
+
+func TestPrintF(t *testing.T) {
+	logger := NewLogger()
+	logger.SetLevel(DEBUG)
+	aaa := "aaaa"
+	logger.Errorf("%s", aaa)
+	logger.Warningf("%s", aaa)
+	logger.Infof("%s", aaa)
+	logger.Debugf("%s", aaa)
+}
