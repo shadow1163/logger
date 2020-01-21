@@ -27,7 +27,7 @@ const (
 //NewLogger Create log instance
 func NewLogger() *Logger {
 	log := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	logger := Logger{3, log}
+	logger := Logger{INFO, log}
 	logger.setPrefix("INFO")
 	return &logger
 }
@@ -52,6 +52,7 @@ func (logger *Logger) Debugf(format string, message ...interface{}) {
 func (logger *Logger) Info(message ...interface{}) {
 	if logger.Level >= INFO {
 		logger.setPrefix("INFO")
+		logger.Println(message...)
 	}
 }
 
@@ -104,11 +105,14 @@ func (logger *Logger) SetLevel(level int) {
 	logger.Level = level
 }
 
-// Stand no level to print
+// Std no level to print
 func (logger *Logger) Std(message ...interface{}) {
-	logger.SetPrefix("")
-	logger.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
-	logger.Println(message...)
+	fmt.Print(message...)
+}
+
+// Stdf no level to print
+func (logger *Logger) Stdf(format string, message ...interface{}) {
+	fmt.Printf(format, message...)
 }
 
 func (logger *Logger) caller(skip int) (pc uintptr, file string, line int, ok bool) {
