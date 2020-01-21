@@ -4,6 +4,7 @@ import "testing"
 
 func TestDebug(t *testing.T) {
 	logger := NewLogger()
+	logger.SetLevel(DEBUG)
 	logger.Debug("123", 123, 12, "123")
 }
 
@@ -45,6 +46,7 @@ func TestOutput(t *testing.T) {
 func TestPrintF(t *testing.T) {
 	logger := NewLogger()
 	logger.SetLevel(DEBUG)
+	logger.NOCOLOR = true
 	aaa := "aaaa"
 	logger.Errorf("%s", aaa)
 	logger.Warningf("%s", aaa)

@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +13,8 @@ var Log = NewLogger()
 
 // Logger struct
 type Logger struct {
-	Level int
+	NOCOLOR bool
+	Level   int
 	*log.Logger
 }
 
@@ -24,10 +26,16 @@ const (
 	DEBUG
 )
 
+const (
+	RED    = 31
+	YELLOW = 33
+	BLUE   = 34
+)
+
 //NewLogger Create log instance
 func NewLogger() *Logger {
 	log := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	logger := Logger{INFO, log}
+	logger := Logger{false, INFO, log}
 	logger.setPrefix("INFO")
 	return &logger
 }
@@ -44,7 +52,7 @@ func (logger *Logger) Debug(message ...interface{}) {
 func (logger *Logger) Debugf(format string, message ...interface{}) {
 	if logger.Level >= DEBUG {
 		logger.setPrefix("DEBUG")
-		logger.Println(fmt.Sprintf(format, message...))
+		logger.Printf(format, message...)
 	}
 }
 
@@ -52,7 +60,13 @@ func (logger *Logger) Debugf(format string, message ...interface{}) {
 func (logger *Logger) Info(message ...interface{}) {
 	if logger.Level >= INFO {
 		logger.setPrefix("INFO")
-		logger.Println(message...)
+		var color int
+		if logger.NOCOLOR {
+			color = 0
+		} else {
+			color = BLUE
+		}
+		fmt.Printf(logger.setColor(color, message...))
 	}
 }
 
@@ -60,7 +74,13 @@ func (logger *Logger) Info(message ...interface{}) {
 func (logger *Logger) Infof(format string, message ...interface{}) {
 	if logger.Level >= INFO {
 		logger.setPrefix("INFO")
-		logger.Printf(format, message...)
+		var color int
+		if logger.NOCOLOR {
+			color = 0
+		} else {
+			color = BLUE
+		}
+		fmt.Printf(logger.setColorf(color, format, message...))
 	}
 }
 
@@ -68,7 +88,13 @@ func (logger *Logger) Infof(format string, message ...interface{}) {
 func (logger *Logger) Warning(message ...interface{}) {
 	if logger.Level >= WARNING {
 		logger.setPrefix("Warning")
-		logger.Println(message...)
+		var color int
+		if logger.NOCOLOR {
+			color = 0
+		} else {
+			color = YELLOW
+		}
+		fmt.Printf(logger.setColor(color, message...))
 	}
 }
 
@@ -76,7 +102,13 @@ func (logger *Logger) Warning(message ...interface{}) {
 func (logger *Logger) Warningf(format string, message ...interface{}) {
 	if logger.Level >= WARNING {
 		logger.setPrefix("Warning")
-		logger.Printf(format, message...)
+		var color int
+		if logger.NOCOLOR {
+			color = 0
+		} else {
+			color = YELLOW
+		}
+		fmt.Printf(logger.setColorf(color, format, message...))
 	}
 }
 
@@ -84,7 +116,13 @@ func (logger *Logger) Warningf(format string, message ...interface{}) {
 func (logger *Logger) Error(message ...interface{}) {
 	if logger.Level >= ERROR {
 		logger.setPrefix("ERROR")
-		logger.Println(message...)
+		var color int
+		if logger.NOCOLOR {
+			color = 0
+		} else {
+			color = RED
+		}
+		fmt.Printf(logger.setColor(color, message...))
 	}
 }
 
@@ -92,7 +130,13 @@ func (logger *Logger) Error(message ...interface{}) {
 func (logger *Logger) Errorf(format string, message ...interface{}) {
 	if logger.Level >= ERROR {
 		logger.setPrefix("ERROR")
-		logger.Printf(format, message...)
+		var color int
+		if logger.NOCOLOR {
+			color = 0
+		} else {
+			color = RED
+		}
+		fmt.Printf(logger.setColorf(color, format, message...))
 	}
 }
 
@@ -103,6 +147,22 @@ func (logger *Logger) SetLevel(level int) {
 		return
 	}
 	logger.Level = level
+}
+
+func (logger *Logger) setColor(color int, message ...interface{}) string {
+	var buf bytes.Buffer
+	logger.SetOutput(&buf)
+	logger.Println(message...)
+	logger.SetOutput(os.Stdout)
+	return (fmt.Sprintf("\033[%dm%s\033[0m", color, buf.String()))
+}
+
+func (logger *Logger) setColorf(color int, format string, message ...interface{}) string {
+	var buf bytes.Buffer
+	logger.SetOutput(&buf)
+	logger.Printf(format, message...)
+	logger.SetOutput(os.Stdout)
+	return (fmt.Sprintf("\033[%dm%s\033[0m", color, buf.String()))
 }
 
 // Std no level to print
